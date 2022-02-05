@@ -2,7 +2,9 @@
 
 ## 简介
 
-通过golang的goruntine来提供一种异步并发运行的能力。
+简单快速实现异步并发任务,避免繁琐代码
+并将任务结果集中返回
+类似python asyncio.gather的语法
 
 ## 应用场景
 
@@ -38,18 +40,18 @@ func main() {
 
 	// 开启并发操作
 	t := time.Now()
-	task1 := &async.Fun{
+	task1 := &async.Task{
 		Name:    "1",
 		Handler: request1,
 		Params:  []interface{}{1},
 	}
-	task2 := &async.Fun{
+	task2 := &async.Task{
 		Name:    "2",
 		Handler: request2,
 		Params:  []interface{}{2},
 	}
-	res := async.gather(task1, task2)
-	//结果是一个map[string][]reflect.Value返回值,可以根据Name取结果,如果没有设定Name则默认为任务顺序数字的字符串:"1","2",...
+	res := async.Gather(task1, task2)
+	//结果是一个map[string][]reflect.Value返回值,可以根据Name取结果,如果没有设定Name则默认为任务顺序数字的字符串:"1","2",...,例如res["1"]即第一个任务结果集
 	fmt.Println(res["1"], "time::", time.Now().Sub(t))
 
 	// 或
@@ -61,7 +63,7 @@ func main() {
 		})
 	}
 	res := async.Gather(tasks...)
-	fmt.Println(res)
+	fmt.Println(res["1"])
 }
 
 
